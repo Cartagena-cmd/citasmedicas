@@ -78,6 +78,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/consultamedica/verConsulta/{id}', 'ConsultaMedicaController@verConsulta');	
     Route::post('/consultamedica/confirmar/{id}', 'ConsultaMedicaController@confirmarConsulta');
 
+
+    // Ruta para el reporte de consulta medica
+    Route::get('/download-pdf', 'ConsultaMedicaController@generar_pdf')->name('descargar-pdf');
+    Route::get('/download-pdf-pendientes', 'ConsultaMedicaController@generar_pdf_pendientes')->name('descargar-pdf-pendientes');
+    Route::get('/download-pdf-historial', 'ConsultaMedicaController@generar_pdf_historial')->name('descargar-pdf-historial');
+
+
     //Ruta paciente - Mis Pacientes
     Route::get('/mispacientes', 'ConsultaMedicaController@misPacientes');
 

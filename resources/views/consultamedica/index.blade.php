@@ -1,6 +1,8 @@
 @extends('layouts.panel')
 
 @section('content')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" rel="stylesheet">
+
   <div class="card shadow">
     <div class="card-header border-0">
       <div class="row align-items-center">
@@ -32,17 +34,30 @@
             Historial de citas
           </a>
         </li>
+        
       </ul>
     </div>    
 
     <div class="tab-content" id="pills-tabContent">
+      
+        
+     
       <div class="tab-pane fade show active" id="consultamedica-confirmada" role="tabpanel">
+        <a class="ml-4 mb-4 btn btn-danger "  href="{{route('descargar-pdf')}}" role="tab" aria-selected="false">
+          <i class="fa-solid fa-file-pdf"></i> Imprimir
+        </a>
         @include('consultamedica.tables.confirmada')
       </div>
       <div class="tab-pane fade" id="consultamedica-pendiente" role="tabpanel">
+        <a class="ml-4 mb-4 btn btn-danger "  href="{{route('descargar-pdf-pendientes')}}" role="tab" aria-selected="false">
+          <i class="fa-solid fa-file-pdf"></i> Imprimir
+        </a>
         @include('consultamedica.tables.pendiente')
       </div>
       <div class="tab-pane fade" id="consultamedica-historial" role="tabpanel">
+        <a class="ml-4 mb-4 btn btn-danger "  href="{{route('descargar-pdf-historial')}}" role="tab" aria-selected="false">
+          <i class="fa-solid fa-file-pdf"></i> Imprimir
+        </a>
         @include('consultamedica.tables.historial')
       </div>
     </div>

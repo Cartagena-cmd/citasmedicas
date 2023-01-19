@@ -11,6 +11,9 @@ use App\Especialidad;
 use Carbon\Carbon;
 use DB;
 use Validator;
+use \PDF;
+
+
 
 class ConsultaMedicaController extends Controller
 {
@@ -241,5 +244,70 @@ class ConsultaMedicaController extends Controller
         ->get();
 
         return view('medico.mispacientes', compact('paciente'));
+    }
+
+    public function generar_pdf(){
+        $consultaConfirmada = DB::table('consultamedica as cm')
+        ->join('users as u1', 'cm.idMedico', '=', 'u1.id')
+        ->join('users as u2', 'cm.idPaciente', '=', 'u2.id')
+        ->join('especialidad as e', 'cm.idEspecialidad', '=', 'e.id')
+        ->select('cm.id','cm.descripcion','cm.fechaConsulta','cm.horaConsulta','cm.estado','cm.tipoConsulta',
+        'u1.name as nombreMedico','u2.name as nombrePaciente','e.nombre as nombreEspecialidad')
+        ->where('cm.estado', 'Confirmada')
+        ->orderBy('cm.id','desc')->paginate(10);
+        $rolUsuario = \Auth::user()->rolUsuario;
+        $pdf = PDF::loadView('consultamedica.generar_pdf', compact('consultaConfirmada', 'rolUsuario'));
+        return $pdf->download('consultasconfirmadas.pdf');
+    }
+    public function generar_pdf_pendientes(){
+        $rolUsuario = \Auth::user()->rolUsuario;
+        if($rolUsuario=="paciente"){
+        $consultaPendiente = DB::table('consultamedica as cm')
+            ->join('users as u1', 'cm.idMedico', '=', 'u1.id')
+            ->join('users as u2', 'cm.idPaciente', '=', 'u2.id')
+            ->join('especialidad as e', 'cm.idEspecialidad', '=', 'e.id')
+            ->select('cm.id','cm.descripcion','cm.fechaConsulta','cm.horaConsulta','cm.estado','cm.tipoConsulta',
+            'u1.name as nombreMedico','u2.name as nombrePaciente','e.nombre as nombreEspecialidad')
+            ->where('cm.estado', 'Reservada')
+            ->where('cm.idPaciente','=', \Auth::user()->id)
+            ->orderBy('cm.id','desc')
+            ->paginate(10);    
+        }else{
+            if($rolUsuario=="doctor"){
+                $consultaPendiente = DB::table('consultamedica as cm')
+                ->join('users as u1', 'cm.idMedico', '=', 'u1.id')
+                ->join('users as u2', 'cm.idPaciente', '=', 'u2.id')
+                ->join('especialidad as e', 'cm.idEspecialidad', '=', 'e.id')
+                ->select('cm.id','cm.descripcion','cm.fechaConsulta','cm.horaConsulta','cm.estado','cm.tipoConsulta',
+                'u1.name as nombreMedico','u2.name as nombrePaciente','e.nombre as nombreEspecialidad')    
+                ->where('cm.estado', 'Reservada')
+                ->where('cm.idMedico','=', \Auth::user()->id)
+                ->orderBy('cm.id','desc')
+                ->paginate(10);
+            }
+        }
+        
+
+        
+        $pdf = PDF::loadView('consultamedica.generar_pdf_pendientes', compact('consultaPendiente', 'rolUsuario'));
+        return $pdf->download('consultaspendientes.pdf');
+    }
+
+    public function generar_pdf_historial(){
+        
+        $consultaHistorial = DB::table('consultamedica as cm')
+        ->join('users as u1', 'cm.idMedico', '=', 'u1.id')
+        ->join('users as u2', 'cm.idPaciente', '=', 'u2.id')
+        ->join('especialidad as e', 'cm.idEspecialidad', '=', 'e.id')
+        ->select('cm.id','cm.descripcion','cm.fechaConsulta','cm.horaConsulta','cm.estado','cm.tipoConsulta',
+        'u1.name as nombreMedico','u2.name as nombrePaciente','e.nombre as nombreEspecialidad')
+        ->whereIn('cm.estado', ['Atendida', 'Cancelada'])
+        ->where('cm.idPaciente','=', \Auth::user()->id)
+        ->orderBy('cm.id','desc')
+        ->paginate(10);
+
+        $rolUsuario = \Auth::user()->rolUsuario;
+        $pdf = PDF::loadView('consultamedica.generar_pdf_historial', compact('consultaHistorial', 'rolUsuario'));
+        return $pdf->download('historialconsultas.pdf');
     }
 }

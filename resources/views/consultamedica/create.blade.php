@@ -14,6 +14,15 @@
         </div>
       </div>
     </div>
+
+   
+      @if (session('notificacion'))
+          <div class="alert alert-success" role="alert">
+            {{ session('notificacion') }}
+          </div>
+      @endif
+    
+
     <div class="card-body">
       @if ($errors->any())
         <div class="alert alert-danger" role="alert">

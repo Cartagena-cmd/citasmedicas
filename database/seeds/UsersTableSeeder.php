@@ -114,5 +114,17 @@ class UsersTableSeeder extends Seeder
         'direccion' => 'Barrio 10 de noviembre',
         'rolUsuario' => 'administrador',
     ]);
+
+    User::create([
+      'name' => 'Jesus Telmo',
+      'email' => 'jesus@gmail.com',
+      'password' => bcrypt('123456789'),
+        'apellidos' => 'Vaca Villarroel',
+        'dni' => '545455',
+        'fechaNac' => '1991/12/20',
+        'telefono' => '78576194',
+        'direccion' => 'Barrio 10 de noviembre',
+        'rolUsuario' => 'administrador',
+    ]);
     }
 }
